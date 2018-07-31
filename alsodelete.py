@@ -4,27 +4,26 @@ from matplotlib import pyplot as plt
 
 sift = cv2.xfeatures2d.SIFT_create()
 
-queryimg = cv2.imread('/Users/andyyang/Desktop/Screen Shot 2018-07-29 at 10.39.08 AM.png',0)
-templateimg = cv2.imread('/Users/andyyang/Desktop/Screen Shot 2018-07-30 at 4.12.30 PM.png',0)
+queryimg = cv2.imread('/Users/andyyang/Desktop/Screen Shot 2a018-07-27 at 4.20.40 PM.png',0)
+templateimg = cv2.imread('/Users/andyyang/Desktop/cratess.png',0)
 TOLERANCE=0.5
-
-
+partitions=1
+MIN_MATCH_COUNT = 4
 
 #queryimg=queryimg[400:800,0:400]
 h,w=queryimg.shape
-queryimg1=queryimg[0:int(h/2),0:w]
-querytemplateimg=queryimg[int(h/2):h,0:w] 
-arr=[]
-for a in range(0,3):
-    for b in range(0,3):
-        arr.append(queryimg[int(a*h/3):int((a+1)*h/3),int(b*w/3):int((b+1)*w/3)])
-MIN_MATCH_COUNT = 4
+# arr=[]
+# for a in range(0,3):
+#     for b in range(0,3):
+#         arr.append(queryimg[int(a*h/3):int((a+1)*h/3),int(b*w/3):int((b+1)*w/3)])
+
 imgarray = []
+arr=[queryimg]
 kp=[]
 
 realgood=[]
 
-for a in range(0,9):
+for a in range(0,partitions):
     queryimg=arr[a]
  
     kp1, des1 = sift.detectAndCompute(queryimg,None)
@@ -86,22 +85,19 @@ for a in range(0,9):
   
   
     #plt.imshow(img3, 'gray'),plt.show()
-    h,w=queryimg.shape[0:2]
-    imgarray.append(queryimg[0:int(h),0:int(w)])
+    # h,w=queryimg.shape[0:2]
+    # imgarray.append(queryimg[0:int(h),0:int(w)])
 
+# test partitioned in 9
+# row1=np.concatenate((imgarray[0], imgarray[1],imgarray[2]), axis=1)
+# row2=np.concatenate((imgarray[3], imgarray[4],imgarray[5]), axis=1)
+# row3=np.concatenate((imgarray[6], imgarray[7],imgarray[8]), axis=1)   
+# vis = np.concatenate((row1,row2,row3),axis=0)
 
-row1=np.concatenate((imgarray[0], imgarray[1],imgarray[2]), axis=1)
-row2=np.concatenate((imgarray[3], imgarray[4],imgarray[5]), axis=1)
-row3=np.concatenate((imgarray[6], imgarray[7],imgarray[8]), axis=1)   
-vis = np.concatenate((row1,row2,row3),axis=0)
-ee = cv2.drawKeypoints(vis,kp,None)
 
 # for match in realgood:
 #     print(match.queryIdx)
 #plt.imshow(ee,'gray')
 #plt.show()
-vis = cv2.drawMatches(vis,kp,templateimg,kp2,realgood,None)  
+vis = cv2.drawMatches(queryimg,kp,templateimg,kp2,realgood,None)  
 plt.imshow(vis, 'gray'),plt.show()
-
-#img3 = cv2.drawMatches(queryimg,kp1,templateimg,kp2,matches[:10], np.array([]), (0, 0, 255),
-                     #flags=2)
